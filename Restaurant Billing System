@@ -1,0 +1,90 @@
+# Restaurant Billing System
+# B.Tech CSE (AI) - Python Project
+
+MENU = {
+    "Dosa": 80,
+    "Idli": 40,
+    "Thali": 150,
+    "Tea": 20
+}
+
+
+def calculate_bill(ordered_items):
+    subtotal = 0
+
+    print("\n========== RESTAURANT BILL ==========")
+    print(f"{'Item':<12}{'Qty':<6}{'Amount':>10}")
+    print("-------------------------------------")
+
+    for item, quantity in ordered_items:
+        amount = MENU[item] * quantity
+        subtotal += amount
+        print(f"{item:<12}{quantity:<6}{amount:>10.2f}")
+
+    # Apply 10% discount only when subtotal > 500
+    discount = subtotal * 0.10 if subtotal > 500 else 0
+
+    # GST is calculated after discount
+    taxable_amount = subtotal - discount
+    gst = taxable_amount * 0.05
+    grand_total = taxable_amount + gst
+
+    print("-------------------------------------")
+    print(f"Subtotal:             {subtotal:.2f}")
+    print(f"Discount:             {discount:.2f}")
+    print(f"GST (5%):             {gst:.2f}")
+    print(f"Grand Total:          {grand_total:.2f}")
+    print("=====================================")
+
+
+def main():
+    ordered_items = []
+
+    print("Welcome to Restaurant Billing System")
+    print("\nAvailable Menu:")
+
+    for item, price in MENU.items():
+        print(f"{item}: Rs.{price}")
+
+    while True:
+        item_name = input(
+            "\nEnter item name (or 'done' to generate bill): "
+        ).strip()
+
+        if item_name.lower() == "done":
+            break
+
+        # Find the item without case sensitivity
+        matched_item = next(
+            (item for item in MENU if item.lower() == item_name.lower()),
+            None
+        )
+
+        if matched_item is None:
+            print("Item not on the menu. Available: Dosa, Idli, Thali, Tea")
+            continue
+
+        quantity_input = input("Enter quantity: ").strip()
+
+        try:
+            quantity = int(quantity_input)
+        except ValueError:
+            print("Invalid quantity. Enter a whole number.")
+            continue
+
+        if quantity < 1:
+            print("Quantity must be at least 1.")
+            continue
+
+        ordered_items.append((matched_item, quantity))
+        amount = MENU[matched_item] * quantity
+        print(f"{matched_item} x{quantity} added | Amount: {amount}")
+
+    if ordered_items:
+        calculate_bill(ordered_items)
+    else:
+        print("No items ordered. Bill not generated.")
+
+
+if __name__ == "__main__":
+    main()
